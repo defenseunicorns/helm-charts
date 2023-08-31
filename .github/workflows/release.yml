@@ -5,9 +5,9 @@ on:
     branches: main
 
 permissions:
-  contents: write # needed to write releases
-  id-token: write # needed for keyless signing
-  packages: write # needed for ghcr access
+  contents: write
+  id-token: write
+  packages: write
 
 jobs:
   get-charts:
@@ -16,24 +16,25 @@ jobs:
       charts: ${{ steps.set-charts.outputs.charts }}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2 # Note: v3 doesn't exist for this action as of my last update in 2021
+        uses: actions/checkout@v3
 
       - name: Get chart names
         id: set-charts
         run: |
           chart_list=$(ls -d ./charts/*/ | awk -F'/' '{printf "\"%s\", ", $3}')
           chart_list="[${chart_list%, }]"
+          echo "Charts: $chart_list"
           echo "charts=$chart_list" >> $GITHUB_ENV
 
   release:
-    needs: get-charts # Make sure this job needs get-charts
+    needs: get-charts
     runs-on: ubuntu-latest
     strategy:
       matrix:
         chart-name: ${{fromJson(needs.get-charts.outputs.charts)}}
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: chart-release
         uses: ./.github/actions/chart-release
