@@ -1,4 +1,3 @@
-#shamelessly stolen from https://github.com/stefanprodan/podinfo/blob/master/.github/workflows/release.yml
 name: release
 
 on:
@@ -11,35 +10,32 @@ permissions:
   packages: write # needed for ghcr access
 
 jobs:
-  login:
+  get-charts:
     runs-on: ubuntu-latest
+    outputs:
+      charts: ${{ steps.set-charts.outputs.charts }}
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2 # Note: v3 doesn't exist for this action as of my last update in 2021
 
-      - uses: actions/checkout@v3
+      - name: Get chart names
+        id: set-charts
+        run: |
+          chart_list=$(ls -d ./charts/*/ | awk -F'/' '{printf "\"%s\", ", $3}')
+          chart_list="[${chart_list%, }]"
+          echo "charts=$chart_list" >> $GITHUB_ENV
 
-      - name: Setup Helm
-        uses: azure/setup-helm@v3
+  release:
+    needs: get-charts # Make sure this job needs get-charts
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        chart-name: ${{fromJson(needs.get-charts.outputs.charts)}}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v2
+      - name: chart-release
+        uses: ./.github/actions/chart-release
         with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Prepare
-        id: prep
-        run: |
-          VERSION=sha-${GITHUB_SHA::8}
-          if [[ $GITHUB_REF == refs/tags/* ]]; then
-            VERSION=${GITHUB_REF/refs\/tags\//}
-          fi
-          echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
-          echo "VERSION=${VERSION}" >> $GITHUB_OUTPUT
-          echo "REVISION=${GITHUB_SHA}" >> $GITHUB_OUTPUT
-
-      - name: Publish Helm chart to GHCR
-        run: |
-          helm package charts/raw
-          helm push defenseunicorns-raw-${{ steps.prep.outputs.VERSION }}.tgz oci://ghcr.io/defenseunicorns/helm-charts
-          rm defenseunicorns-raw-${{ steps.prep.outputs.VERSION }}.tgz
+          chart-name: ${{ matrix.chart-name }}
