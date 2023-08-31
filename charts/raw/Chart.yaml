@@ -1,0 +1,14 @@
+apiVersion: v2
+name: raw
+description: "Utility helm chart for deploying arbitrary kubernetes manifests"
+type: application
+version: 0.1.0
+appVersion: 0.1.0
+icon: https://avatars.githubusercontent.com/u/87975021?s=200&v=4
+home: "https://github.com/defenseunicorns/helm-charts/tree/master/charts/raw"
+keywords:
+  - raw
+  - templates
+  - resources
+sources:
+  - "https://github.com/defenseunicorns/helm-charts/tree/master/charts/raw"
