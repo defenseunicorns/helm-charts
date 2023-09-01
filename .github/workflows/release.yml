@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        chart-name: ${{ needs.get-charts.outputs.charts }}
+        chart-name: ${{ fromJson(needs.get-charts.outputs.charts) }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
