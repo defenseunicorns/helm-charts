@@ -10,8 +10,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
 
     - name: Setup Helm
       uses: azure/setup-helm@v3
@@ -25,6 +23,7 @@ runs:
 
     - name: Prepare
       id: prep
+      shell: bash -e -o pipefail {0}
       run: |
         VERSION=$(helm show chart ./charts/${{ inputs.chart-name }} | grep '^version:' | cut -d ' ' -f 2)
         echo "BUILD_DATE=$(date -u +'%Y-%m-%dT%H:%M:%SZ')" >> $GITHUB_OUTPUT
@@ -32,6 +31,7 @@ runs:
         echo "REVISION=${GITHUB_SHA}" >> $GITHUB_OUTPUT
 
     - name: Publish Helm chart to GHCR
+      shell: bash -e -o pipefail {0}
       run: |
         helm package charts/${{ inputs.chart-name }}
         helm push ${{ inputs.chart-name }}-${{ steps.prep.outputs.VERSION }}.tgz oci://ghcr.io/defenseunicorns/helm-charts
