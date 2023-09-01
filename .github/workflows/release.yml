@@ -46,7 +46,7 @@ jobs:
         with:
           filters: |
             src:
-              - 'charts/${{ matrix.chart-name }}/**/*.{yml,yaml,tpl}'
+              - 'charts/${{ matrix.chart-name }}/**/*.{yml,yaml,tpl,tgz}'
 
       - name: chart-release
         if: steps.changes.outputs.src == 'true'
