@@ -52,6 +52,9 @@ jobs:
         run: |
           echo "Chart name: ${{ matrix.chart-name }}"
 
+      - name: extra workflow debug
+        uses: hmarr/debug-action@v2
+
       - name: chart-release
         uses: ./.github/actions/chart-release
         with:

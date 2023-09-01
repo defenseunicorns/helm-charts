@@ -6,10 +6,16 @@ inputs:
   chart-name:
     description: The name of the chart to release
     required: true
+  token:
+    description: The GitHub token to use for the release
+    required: true
 
 runs:
   using: composite
   steps:
+
+    - name: extra action debug
+      uses: hmarr/debug-action@v2
 
     - name: Setup Helm
       uses: azure/setup-helm@v3
@@ -19,7 +25,7 @@ runs:
       with:
         registry: ghcr.io
         username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
+        password: ${{ inputs.token }}
 
     - name: Prepare
       id: prep
