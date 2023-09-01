@@ -47,10 +47,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
       - name: debug
         run: |
           echo "Chart name: ${{ matrix.chart-name }}"
-
 
       - name: chart-release
         uses: ./.github/actions/chart-release
