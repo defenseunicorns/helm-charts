@@ -13,10 +13,6 @@ inputs:
 runs:
   using: composite
   steps:
-
-    - name: extra action debug
-      uses: hmarr/debug-action@v2
-
     - name: Setup Helm
       uses: azure/setup-helm@v3
 
