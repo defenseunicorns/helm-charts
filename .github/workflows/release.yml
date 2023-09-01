@@ -29,6 +29,15 @@ jobs:
           echo "Charts: $chart_list"
           echo "charts=$chart_list" >> $GITHUB_ENV
 
+  debug-job:
+    runs-on: ubuntu-latest
+    needs: get-charts
+    steps:
+      - env:
+          CHARTS: ${{ needs.get-charts.outputs.charts }}
+        run: |
+          echo "Charts: $CHARTS"
+
   release:
     needs: get-charts
     runs-on: ubuntu-latest
