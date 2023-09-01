@@ -27,7 +27,7 @@ jobs:
           chart_list=$(ls -d ./charts/*/ | awk -F'/' '{printf "\"%s\", ", $3}')
           chart_list="[${chart_list%, }]"
           echo "Charts: $chart_list"
-          echo "charts=$chart_list" >> $GITHUB_ENV
+          echo "charts=$chart_list" >> "$GITHUB_OUTPUT"
 
   debug-job:
     runs-on: ubuntu-latest
